@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Calculadora</h1>
+
+        <form id="form-calculo">
+            <input type="number" id="valorA" placeholder="Valor A" required>
+            <input type="number" id="valorB" placeholder="Valor B" required>
+            <div class="botoes">
+                <button type="button" data-endpoint="/somar">Somar</button>
+                <button type="button" data-endpoint="/multiplicar">Multiplicar</button>
+                <button type="button" data-endpoint="/dividir">Dividir</button>
+            </div>
+        </form>
+        
+        <h2>Resposta do Servidor:</h2>
+        <pre id="resposta-calculo"></pre>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3938';
+        const formCalculo = document.getElementById('form-calculo');
+        const respostaCalculo = document.getElementById('resposta-calculo');
+
+        // Adiciona um evento de clique na área dos botões
+        formCalculo.addEventListener('click', async (event) => {
+            // Verifica se o clique foi em um botão com o atributo 'data-endpoint'
+            if (event.target.tagName === 'BUTTON') {
+                const endpoint = event.target.dataset.endpoint;
+                if (!endpoint) return;
+
+                const a = document.getElementById('valorA').value;
+                const b = document.getElementById('valorB').value;
+
+                if (a === '' || b === '') {
+                    respostaCalculo.textContent = 'Por favor, preencha ambos os valores A e B.';
+                    return;
+                }
+
+                const dados = {
+                    a: parseFloat(a),
+                    b: parseFloat(b)
+                };
+
+                try {
+                    respostaCalculo.textContent = 'Calculando...'; // Feedback para o usuário
+                    const response = await fetch(`${API_URL}${endpoint}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(dados)
+                    });
+                    
+                    const resultado = await response.json();
+                    // Exibe o JSON formatado na tela
+                    respostaCalculo.textContent = resultado.resultado
+
+                } catch (error) {
+                    respostaCalculo.textContent = `Erro na requisição: ${error}`;
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
