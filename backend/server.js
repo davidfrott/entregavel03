@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const port = 3938;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
@@ -28,10 +28,10 @@ app.post('/dividir', (req, res) => {
     res.json({ operacao: 'divisao', resultado: `A divisão de ${body.a} e ${body.b} é: ${div}` });
 });
 
-app.listen(port, (error) => {
+app.listen(PORT, (error) => {
     if (error) {
         console.log('Servidor nao inicou por conta do error ${error}');
     } else {
-        console.log(`Servidor rodando em http://localhost:${port}`);
+        console.log(`Servidor rodando em http://localhost:${PORT}`);
     }
 });
