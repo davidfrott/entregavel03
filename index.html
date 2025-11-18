@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Teste Post</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #1c1e21;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            display: grid;
+            gap: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            width: 100%;
+        }
+        .test-box {
+            background-color: #ffffff;
+            border: 1px solid #dddfe2;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-top: 0;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        input[type="number"] {
+            width: calc(50% - 12px);
+            padding: 10px;
+            margin-right: 5px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #166fe5;
+        }
+        pre {
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            min-height: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Painel de Teste de Post</h1>
+
+        <div class="test-box">
+            <h2>1. /somar</h2>
+            <form onsubmit="handleCalc(event, 'somar')">
+                <input type="number" name="a" placeholder="Valor A" required>
+                <input type="number" name="b" placeholder="Valor B" required>
+                <button type="submit">Calcular Soma</button>
+            </form>
+            <pre id="res-somar"></pre>
+        </div>
+
+        <div class="test-box">
+            <h2>2. /subtrair</h2>
+            <form onsubmit="handleCalc(event, 'subtrair')">
+                <input type="number" name="a" placeholder="Valor A" required>
+                <input type="number" name="b" placeholder="Valor B" required>
+                <button type="submit">Calcular Subtração</button>
+            </form>
+            <pre id="res-subtrair"></pre>
+        </div>
+
+        <div class="test-box">
+            <h2>3. /multiplicar</h2>
+            <form onsubmit="handleCalc(event, 'multiplicar')">
+                <input type="number" name="a" placeholder="Valor A" required>
+                <input type="number" name="b" placeholder="Valor B" required>
+                <button type="submit">Calcular Multiplicação</button>
+            </form>
+            <pre id="res-multiplicar"></pre>
+        </div>
+
+        <div class="test-box">
+            <h2>4. /dividir</h2>
+            <form onsubmit="handleCalc(event, 'dividir')">
+                <input type="number" name="a" placeholder="Valor A" required>
+                <input type="number" name="b" placeholder="Valor B" required>
+                <button type="submit">Calcular Divisão</button>
+            </form>
+            <pre id="res-dividir"></pre>
+        </div>
+
+        <div class="test-box">
+            <h2>5. /potencia (A^B)</h2>
+            <form onsubmit="handleCalc(event, 'potencia')">
+                <input type="number" name="a" placeholder="Base" required>
+                <input type="number" name="b" placeholder="Expoente" required>
+                <button type="submit">Calcular Potência</button>
+            </form>
+            <pre id="res-potencia"></pre>
+        </div>
+
+        <div class="test-box">
+            <h2>6. /resto (Mod %)</h2>
+            <form onsubmit="handleCalc(event, 'resto')">
+                <input type="number" name="a" placeholder="Valor A" required>
+                <input type="number" name="b" placeholder="Valor B" required>
+                <button type="submit">Calcular Resto</button>
+            </form>
+            <pre id="res-resto"></pre>
+        </div>
+
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        async function handleCalc(event, endpoint) {
+            event.preventDefault();
+            const form = event.target;
+            const a = form.a.value;
+            const b = form.b.value;
+            const responseElement = document.getElementById(`res-${endpoint}`);
+            
+            responseElement.textContent = "Calculando...";
+
+            try {
+                const response = await fetch(`${API_URL}/${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ a: parseFloat(a), b: parseFloat(b) })
+                });
+                const result = await response.json();
+                
+                if(response.ok) {
+                    responseElement.textContent = result.resultado;
+                } else {
+                    responseElement.textContent = `Erro: ${result.error || 'Erro desconhecido'}`;
+                }
+            } catch (error) {
+                responseElement.textContent = `Erro de conexão: ${error.message}`;
+            }
+        }
+    </script>
+
+</body>
+</html>
